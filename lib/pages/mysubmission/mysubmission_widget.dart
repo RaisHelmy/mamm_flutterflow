@@ -15,10 +15,11 @@ export 'mysubmission_model.dart';
 class MysubmissionWidget extends StatefulWidget {
   const MysubmissionWidget({
     Key? key,
-    this.searchresultbysrno,
-  }) : super(key: key);
+    String? uid,
+  })  : this.uid = uid ?? '36b47082-df2d-4ef3-835e-627c3bbfd776',
+        super(key: key);
 
-  final dynamic searchresultbysrno;
+  final String uid;
 
   @override
   _MysubmissionWidgetState createState() => _MysubmissionWidgetState();
@@ -46,6 +47,8 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
       child: Scaffold(
@@ -152,130 +155,15 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                   ],
                 ),
               ),
-              Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(5.0, 5.0, 5.0, 5.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 100.0,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 4.0,
-                            color: Color(0x33000000),
-                            offset: Offset(0.0, 2.0),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(5.0),
-                        border: Border.all(
-                          color: FlutterFlowTheme.of(context).secondaryText,
-                          width: 1.0,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  20.0, 10.0, 10.0, 10.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      'EQ02-20200518-0002',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium,
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      '200108847 - CIRCUIT BREAKER',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      '5/18/2020 4:15:44 PM',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontWeight: FontWeight.w200,
-                                          ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 20.0, 0.0),
-                            child: FFButtonWidget(
-                              onPressed: () async {
-                                context.pushNamed(
-                                  'searchbyserialno',
-                                  queryParameters: {
-                                    'eqno': serializeParam(
-                                      'eqnovalueishere',
-                                      ParamType.String,
-                                    ),
-                                  }.withoutNulls,
-                                );
-                              },
-                              text: 'Decline',
-                              options: FFButtonOptions(
-                                height: 40.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    24.0, 0.0, 24.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
-                                color: Color(0xFFFF0004),
-                                textStyle: FlutterFlowTheme.of(context)
-                                    .titleSmall
-                                    .override(
-                                      fontFamily: 'Readex Pro',
-                                      color: Colors.white,
-                                    ),
-                                elevation: 3.0,
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
               FutureBuilder<ApiCallResponse>(
-                future: FFAppState()
-                    .cachepage(
-                  requestFn: () => GetMyHistoryCall.call(),
-                )
-                    .then((result) {
-                  _model.apiRequestCompleted = true;
-                  return result;
-                }),
+                future:
+                    (_model.apiRequestCompleter ??= Completer<ApiCallResponse>()
+                          ..complete(GetmysubmissionCall.call(
+                            uid: FFAppState().tokenuser == 'tnb\\admin.tomas'
+                                ? '45ffd405-8565-4816-ab22-3c5d6a973d64'
+                                : FFAppState().tokenuser,
+                          )))
+                        .future,
                 builder: (context, snapshot) {
                   // Customize what your widget looks like when it's loading.
                   if (!snapshot.hasData) {
@@ -290,28 +178,26 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                       ),
                     );
                   }
-                  final listViewGetMyHistoryResponse = snapshot.data!;
+                  final listViewGetmysubmissionResponse = snapshot.data!;
                   return Builder(
                     builder: (context) {
-                      final gmyhistory = GetMyHistoryCall.gmyhistory(
-                            listViewGetMyHistoryResponse.jsonBody,
-                          )?.toList() ??
-                          [];
+                      final getmysubmissionhistorylist =
+                          listViewGetmysubmissionResponse.jsonBody.toList();
                       return RefreshIndicator(
                         onRefresh: () async {
-                          setState(() {
-                            FFAppState().clearCachepageCache();
-                            _model.apiRequestCompleted = false;
-                          });
+                          setState(() => _model.apiRequestCompleter = null);
                           await _model.waitForApiRequestCompleted();
                         },
                         child: ListView.builder(
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
-                          itemCount: gmyhistory.length,
-                          itemBuilder: (context, gmyhistoryIndex) {
-                            final gmyhistoryItem = gmyhistory[gmyhistoryIndex];
+                          itemCount: getmysubmissionhistorylist.length,
+                          itemBuilder:
+                              (context, getmysubmissionhistorylistIndex) {
+                            final getmysubmissionhistorylistItem =
+                                getmysubmissionhistorylist[
+                                    getmysubmissionhistorylistIndex];
                             return Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -330,14 +216,10 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                                           alignment:
                                               AlignmentDirectional(-1.0, -1.0),
                                           child: Text(
-                                            valueOrDefault<String>(
-                                              GetMyHistoryCall
-                                                  .gmyhistoryreferenceno(
-                                                listViewGetMyHistoryResponse
-                                                    .jsonBody,
-                                              ).toString(),
-                                              'ReferenceNo',
-                                            ),
+                                            getJsonField(
+                                              getmysubmissionhistorylistItem,
+                                              r'''$.ReferenceNo''',
+                                            ).toString(),
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium,
                                           ),
@@ -346,12 +228,12 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                                           alignment:
                                               AlignmentDirectional(-1.0, -1.0),
                                           child: Text(
-                                            '${GetMyHistoryCall.gmyhistoryequnr(
-                                              listViewGetMyHistoryResponse
-                                                  .jsonBody,
-                                            ).toString()} - ${GetMyHistoryCall.gmyhistoryobjtypedesc(
-                                              listViewGetMyHistoryResponse
-                                                  .jsonBody,
+                                            '${getJsonField(
+                                              getmysubmissionhistorylistItem,
+                                              r'''$.EQUNR''',
+                                            ).toString()} - ${getJsonField(
+                                              getmysubmissionhistorylistItem,
+                                              r'''$.ObjectTypeDesc''',
                                             ).toString()}',
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
@@ -365,15 +247,10 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                                           alignment:
                                               AlignmentDirectional(-1.0, -1.0),
                                           child: Text(
-                                            valueOrDefault<String>(
-                                              functions.dateformat(
-                                                  GetMyHistoryCall
-                                                      .gmyhistorymodifieddate(
-                                                listViewGetMyHistoryResponse
-                                                    .jsonBody,
-                                              ).toString()),
-                                              'null',
-                                            ),
+                                            getJsonField(
+                                              getmysubmissionhistorylistItem,
+                                              r'''$.ModifiedDate''',
+                                            ).toString(),
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
@@ -393,8 +270,9 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                                     onPressed: () {
                                       print('Button pressed ...');
                                     },
-                                    text: GetMyHistoryCall.gmyhistorystatusdesc(
-                                      listViewGetMyHistoryResponse.jsonBody,
+                                    text: getJsonField(
+                                      getmysubmissionhistorylistItem,
+                                      r'''$.StatusDesc''',
                                     ).toString(),
                                     options: FFButtonOptions(
                                       height: 40.0,
@@ -403,7 +281,15 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                                       iconPadding:
                                           EdgeInsetsDirectional.fromSTEB(
                                               0.0, 0.0, 0.0, 0.0),
-                                      color: Color(0xFF01FF00),
+                                      color: colorFromCssString(
+                                        functions.colortohex(getJsonField(
+                                          getmysubmissionhistorylistItem,
+                                          r'''$.ColorCode''',
+                                        ).toString())!,
+                                        defaultColor:
+                                            FlutterFlowTheme.of(context)
+                                                .secondaryText,
+                                      ),
                                       textStyle: FlutterFlowTheme.of(context)
                                           .titleSmall
                                           .override(

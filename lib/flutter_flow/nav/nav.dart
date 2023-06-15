@@ -45,12 +45,17 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'Login',
           path: '/login',
-          builder: (context, params) => LoginWidget(),
+          builder: (context, params) => LoginWidget(
+            username: params.getParam('username', ParamType.String),
+            password: params.getParam('password', ParamType.String),
+          ),
         ),
         FFRoute(
           name: 'Home',
           path: '/home',
-          builder: (context, params) => HomeWidget(),
+          builder: (context, params) => HomeWidget(
+            tokenuser: params.getParam('tokenuser', ParamType.String),
+          ),
         ),
         FFRoute(
           name: 'EquipmentSearch',
@@ -65,18 +70,31 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: 'searchbyeqno',
-          path: '/searchbyeqno',
-          builder: (context, params) => SearchbyeqnoWidget(
-            eqinfo: params.getParam('eqinfo', ParamType.String),
+          name: 'editequnr',
+          path: '/editequnr',
+          builder: (context, params) => EditequnrWidget(
+            equnr: params.getParam('equnr', ParamType.String),
+            uid: params.getParam('uid', ParamType.String),
           ),
         ),
         FFRoute(
           name: 'mysubmission',
           path: '/mysubmission',
           builder: (context, params) => MysubmissionWidget(
-            searchresultbysrno:
-                params.getParam('searchresultbysrno', ParamType.JSON),
+            uid: params.getParam('uid', ParamType.String),
+          ),
+        ),
+        FFRoute(
+          name: 'eqbyequnr',
+          path: '/eqbyequnr',
+          builder: (context, params) => EqbyequnrWidget(),
+        ),
+        FFRoute(
+          name: 'resultbyequnr2',
+          path: '/resultbyequnr2',
+          builder: (context, params) => Resultbyequnr2Widget(
+            equnr: params.getParam('equnr', ParamType.String),
+            uid: params.getParam('uid', ParamType.String),
           ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),

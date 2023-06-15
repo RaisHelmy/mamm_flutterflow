@@ -1,8 +1,10 @@
+import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_checkbox_group.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +13,14 @@ import 'login_model.dart';
 export 'login_model.dart';
 
 class LoginWidget extends StatefulWidget {
-  const LoginWidget({Key? key}) : super(key: key);
+  const LoginWidget({
+    Key? key,
+    this.username,
+    this.password,
+  }) : super(key: key);
+
+  final String? username;
+  final String? password;
 
   @override
   _LoginWidgetState createState() => _LoginWidgetState();
@@ -27,8 +36,8 @@ class _LoginWidgetState extends State<LoginWidget> {
     super.initState();
     _model = createModel(context, () => LoginModel());
 
-    _model.textController1 ??= TextEditingController();
-    _model.textController2 ??= TextEditingController();
+    _model.textController1 ??= TextEditingController(text: 'tnb\\admin.tomas');
+    _model.textController2 ??= TextEditingController(text: '@dm1n_t0mas');
   }
 
   @override
@@ -40,6 +49,8 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
       child: Scaffold(
@@ -103,15 +114,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   autofocus: true,
                                   obscureText: false,
                                   decoration: InputDecoration(
-                                    labelText: 'Password',
+                                    labelText: 'Username',
                                     labelStyle: FlutterFlowTheme.of(context)
                                         .labelMedium,
                                     hintStyle: FlutterFlowTheme.of(context)
                                         .labelMedium,
                                     enabledBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
-                                        color: FlutterFlowTheme.of(context)
-                                            .alternate,
+                                        color: Color(0xFFC5C5C5),
                                         width: 2.0,
                                       ),
                                       borderRadius: BorderRadius.circular(8.0),
@@ -159,15 +169,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   autofocus: true,
                                   obscureText: false,
                                   decoration: InputDecoration(
-                                    labelText: 'Username',
+                                    labelText: 'Password',
                                     labelStyle: FlutterFlowTheme.of(context)
                                         .labelMedium,
                                     hintStyle: FlutterFlowTheme.of(context)
                                         .labelMedium,
                                     enabledBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
-                                        color: FlutterFlowTheme.of(context)
-                                            .alternate,
+                                        color: Color(0xFFC5C5C5),
                                         width: 2.0,
                                       ),
                                       borderRadius: BorderRadius.circular(8.0),
@@ -234,7 +243,68 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     0.0, 40.0, 0.0, 0.0),
                                 child: FFButtonWidget(
                                   onPressed: () async {
-                                    context.pushNamed('Home');
+                                    _model.tokenresult = await AdloginCall.call(
+                                      userName: functions.uriencode(
+                                          _model.textController1.text),
+                                      password: _model.textController2.text,
+                                    );
+                                    if ((_model.tokenresult?.succeeded ??
+                                        true)) {
+                                      FFAppState().token = AdloginCall.token(
+                                        (_model.tokenresult?.jsonBody ?? ''),
+                                      ).toString();
+                                      FFAppState().tokenuser = functions
+                                          .tokentousername(AdloginCall.token(
+                                        (_model.tokenresult?.jsonBody ?? ''),
+                                      ).toString())!;
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Login Success!User: ${FFAppState().tokenuser}Timeout:${FFAppState().tokentimeout}',
+                                            style: TextStyle(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
+                                            ),
+                                          ),
+                                          duration:
+                                              Duration(milliseconds: 5000),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondary,
+                                        ),
+                                      );
+
+                                      context.goNamed(
+                                        'Home',
+                                        queryParameters: {
+                                          'tokenuser': serializeParam(
+                                            FFAppState().tokenuser,
+                                            ParamType.String,
+                                          ),
+                                        }.withoutNulls,
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Login Failed',
+                                            style: TextStyle(
+                                              color: Color(0xFFFF0004),
+                                            ),
+                                          ),
+                                          duration:
+                                              Duration(milliseconds: 4000),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondary,
+                                        ),
+                                      );
+                                    }
+
+                                    setState(() {});
                                   },
                                   text: 'Sign In',
                                   options: FFButtonOptions(

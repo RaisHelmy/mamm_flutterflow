@@ -17,8 +17,7 @@ class MysubmissionModel extends FlutterFlowModel {
   // State field(s) for TextField widget.
   TextEditingController? textController;
   String? Function(BuildContext, String?)? textControllerValidator;
-  bool apiRequestCompleted = false;
-  String? apiRequestLastUniqueKey;
+  Completer<ApiCallResponse>? apiRequestCompleter;
 
   /// Initialization and disposal methods.
 
@@ -41,7 +40,7 @@ class MysubmissionModel extends FlutterFlowModel {
     while (true) {
       await Future.delayed(Duration(milliseconds: 50));
       final timeElapsed = stopwatch.elapsedMilliseconds;
-      final requestComplete = apiRequestCompleted;
+      final requestComplete = apiRequestCompleter?.isCompleted ?? false;
       if (timeElapsed > maxWait || (requestComplete && timeElapsed > minWait)) {
         break;
       }

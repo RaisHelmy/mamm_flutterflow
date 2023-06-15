@@ -20,20 +20,50 @@ class FFAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  final _cachepageManager = FutureRequestManager<ApiCallResponse>();
-  Future<ApiCallResponse> cachepage({
+  String _token = '';
+  String get token => _token;
+  set token(String _value) {
+    _token = _value;
+  }
+
+  String _loginame = '';
+  String get loginame => _loginame;
+  set loginame(String _value) {
+    _loginame = _value;
+  }
+
+  String _uid = '';
+  String get uid => _uid;
+  set uid(String _value) {
+    _uid = _value;
+  }
+
+  String _tokenuser = '';
+  String get tokenuser => _tokenuser;
+  set tokenuser(String _value) {
+    _tokenuser = _value;
+  }
+
+  String _tokentimeout = '';
+  String get tokentimeout => _tokentimeout;
+  set tokentimeout(String _value) {
+    _tokentimeout = _value;
+  }
+
+  final _getuserinfoManager = FutureRequestManager<ApiCallResponse>();
+  Future<ApiCallResponse> getuserinfo({
     String? uniqueQueryKey,
     bool? overrideCache,
     required Future<ApiCallResponse> Function() requestFn,
   }) =>
-      _cachepageManager.performRequest(
+      _getuserinfoManager.performRequest(
         uniqueQueryKey: uniqueQueryKey,
         overrideCache: overrideCache,
         requestFn: requestFn,
       );
-  void clearCachepageCache() => _cachepageManager.clear();
-  void clearCachepageCacheKey(String? uniqueKey) =>
-      _cachepageManager.clearRequest(uniqueKey);
+  void clearGetuserinfoCache() => _getuserinfoManager.clear();
+  void clearGetuserinfoCacheKey(String? uniqueKey) =>
+      _getuserinfoManager.clearRequest(uniqueKey);
 }
 
 LatLng? _latLngFromString(String? val) {
