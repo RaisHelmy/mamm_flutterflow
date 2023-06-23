@@ -1,33 +1,36 @@
 import '/backend/api_requests/api_calls.dart';
-import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/custom_functions.dart' as functions;
+import '/flutter_flow/upload_data.dart';
 import 'dart:async';
-import 'package:easy_debounce/easy_debounce.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class MysubmissionModel extends FlutterFlowModel {
-  ///  State fields for stateful widgets in this page.
+class EquipmentphotoModel extends FlutterFlowModel {
+  ///  State fields for stateful widgets in this component.
 
-  final unfocusNode = FocusNode();
-  // State field(s) for TextField widget.
-  TextEditingController? textController;
-  String? Function(BuildContext, String?)? textControllerValidator;
+  bool isDataUploading1 = false;
+  FFUploadedFile uploadedLocalFile1 =
+      FFUploadedFile(bytes: Uint8List.fromList([]));
+
+  // Stores action output result for [Backend Call - API (UploadPhoto)] action in Button widget.
+  ApiCallResponse? apiResult0au;
+  bool isDataUploading2 = false;
+  List<FFUploadedFile> uploadedLocalFiles2 = [];
+
+  // Stores action output result for [Backend Call - API (UploadPhotoM)] action in Button widget.
+  ApiCallResponse? apiResultmmo;
   Completer<ApiCallResponse>? apiRequestCompleter;
 
   /// Initialization and disposal methods.
 
   void initState(BuildContext context) {}
 
-  void dispose() {
-    unfocusNode.dispose();
-    textController?.dispose();
-  }
+  void dispose() {}
 
   /// Action blocks are added here.
 

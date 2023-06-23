@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'lat_lng.dart';
 import 'place.dart';
+import 'uploaded_file.dart';
 
 String? dateformat(String? originalDate) {
   if (originalDate != null) {
@@ -151,4 +152,150 @@ DateTime? tokentoexpieration(String token) {
 
 String doubletosingleslash(String doubleslash) {
   return doubleslash.replaceAll('\\\\', '\\');
+}
+
+List<String>? combinelist(
+  List<String>? code,
+  List<String>? desc,
+  String? separator,
+) {
+  List<String>? output = [];
+
+  if (code == null || desc == null || separator == null) {
+    return null;
+  }
+
+  int minLength = math.min(code.length, desc.length);
+
+  for (int i = 0; i < minLength; i++) {
+    output.add("${code[i]} $separator ${desc[i]}");
+  }
+
+  return output;
+}
+
+List<dynamic> generatemonth() {
+  List<Map<String, String>> monthList = [];
+
+  for (int month = 12; month >= 1; month--) {
+    DateTime date = DateTime(2023, month);
+    String monthValue = DateFormat('MM').format(date);
+    String monthName = DateFormat('MMMM').format(date);
+
+    monthList.add({'value': monthValue, 'name': monthName});
+  }
+
+  return monthList;
+}
+
+List<String> generateday(
+  String year,
+  String month,
+) {
+  int selectedYear = int.parse(year);
+  int selectedMonth = int.parse(month);
+
+  DateTime startDate = DateTime(selectedYear, selectedMonth, 1);
+  DateTime endDate = DateTime(selectedYear, selectedMonth + 1, 0);
+
+  List<String> dayList = [];
+
+  for (int day = 1; day <= endDate.day; day++) {
+    DateTime date = DateTime(selectedYear, selectedMonth, day);
+    String formattedDay = DateFormat('dd').format(date);
+
+    dayList.add(formattedDay);
+  }
+
+  return dayList;
+}
+
+List<String> generatefromyear(int fromYear) {
+  DateTime now = DateTime.now();
+  int currentYear = now.year;
+  List<String> yearList = [];
+
+  for (int year = currentYear; year >= fromYear; year--) {
+    yearList.add(year.toString());
+  }
+
+  return yearList;
+}
+
+int inbdttoday(String inbdt) {
+  String inbdtString = inbdt.toString();
+  String dayString = inbdtString.substring(6, 8);
+  int day = int.parse(dayString);
+  return day;
+}
+
+int inbdttomonth(String inbdt) {
+  String inbdtString = inbdt.toString();
+  String monthString = inbdtString.substring(4, 6);
+  int month = int.parse(monthString);
+  return month;
+}
+
+List<String>? prefixlist(List<dynamic>? objecttype) {
+  return objecttype
+      ?.map((obj) =>
+          obj != null ? (obj["ObjectTypePrefix"]?.toString() ?? '') : '')
+      .toList();
+}
+
+List<bool>? checklistsamestring(
+  List<String>? list,
+  String? string,
+) {
+  List<bool>? output = [];
+
+  if (list == null || string == null) {
+    return null;
+  }
+
+  for (int i = 0; i < list.length; i++) {
+    output.add(list[i] == string);
+  }
+
+  return output;
+}
+
+int? findindex(
+  List<String>? listitem,
+  String? value,
+) {
+  return null;
+}
+
+bool checkjsoncontainword(
+  dynamic jsondata,
+  String? value,
+) {
+  String jsonDataString =
+      json.encode(jsondata); // Convert the jsondata to String
+  return jsonDataString
+      .contains(value ?? ''); // Check if the String contains the value
+}
+
+String? prefix(dynamic objecttype) {
+  return objecttype["ObjectTypePrefix"] ?? '';
+}
+
+int inbdttoyear(String inbdt) {
+  String inbdtString = inbdt.toString();
+  String yearString = inbdtString.substring(0, 4);
+  int year = int.parse(yearString);
+  return year;
+}
+
+List<int>? generateyear(
+  int fromYear,
+  int toYear,
+) {
+  List<int> yearList = [];
+  for (int year = fromYear; year <= toYear; year++) {
+    yearList.add(year);
+  }
+
+  return yearList;
 }

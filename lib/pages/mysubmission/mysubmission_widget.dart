@@ -5,6 +5,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'dart:async';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,13 +14,7 @@ import 'mysubmission_model.dart';
 export 'mysubmission_model.dart';
 
 class MysubmissionWidget extends StatefulWidget {
-  const MysubmissionWidget({
-    Key? key,
-    String? uid,
-  })  : this.uid = uid ?? '36b47082-df2d-4ef3-835e-627c3bbfd776',
-        super(key: key);
-
-  final String uid;
+  const MysubmissionWidget({Key? key}) : super(key: key);
 
   @override
   _MysubmissionWidgetState createState() => _MysubmissionWidgetState();
@@ -99,6 +94,11 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                             EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 8.0, 0.0),
                         child: TextFormField(
                           controller: _model.textController,
+                          onChanged: (_) => EasyDebounce.debounce(
+                            '_model.textController',
+                            Duration(milliseconds: 0),
+                            () => setState(() {}),
+                          ),
                           autofocus: true,
                           obscureText: false,
                           decoration: InputDecoration(
@@ -108,7 +108,8 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                             hintStyle: FlutterFlowTheme.of(context).labelMedium,
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
-                                color: FlutterFlowTheme.of(context).alternate,
+                                color:
+                                    FlutterFlowTheme.of(context).secondaryText,
                                 width: 2.0,
                               ),
                               borderRadius: BorderRadius.circular(8.0),
@@ -143,15 +144,6 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 50.0, 0.0),
-                      child: Icon(
-                        Icons.search,
-                        color: FlutterFlowTheme.of(context).secondaryText,
-                        size: 24.0,
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -159,9 +151,10 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                 future:
                     (_model.apiRequestCompleter ??= Completer<ApiCallResponse>()
                           ..complete(GetmysubmissionCall.call(
-                            uid: FFAppState().tokenuser == 'tnb\\admin.tomas'
-                                ? '45ffd405-8565-4816-ab22-3c5d6a973d64'
-                                : FFAppState().tokenuser,
+                            uid: getJsonField(
+                              FFAppState().alluserinfo,
+                              r'''$.EmployeeID''',
+                            ).toString(),
                           )))
                         .future,
                 builder: (context, snapshot) {
@@ -182,7 +175,15 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                   return Builder(
                     builder: (context) {
                       final getmysubmissionhistorylist =
-                          listViewGetmysubmissionResponse.jsonBody.toList();
+                          GetmysubmissionCall.all(
+                                listViewGetmysubmissionResponse.jsonBody,
+                              )?.toList() ??
+                              [];
+                      if (getmysubmissionhistorylist.isEmpty) {
+                        return Image.asset(
+                          'assets/images/unnamed.png',
+                        );
+                      }
                       return RefreshIndicator(
                         onRefresh: () async {
                           setState(() => _model.apiRequestCompleter = null);
@@ -198,114 +199,166 @@ class _MysubmissionWidgetState extends State<MysubmissionWidget> {
                             final getmysubmissionhistorylistItem =
                                 getmysubmissionhistorylist[
                                     getmysubmissionhistorylistIndex];
-                            return Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        20.0, 10.0, 10.0, 10.0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Align(
-                                          alignment:
-                                              AlignmentDirectional(-1.0, -1.0),
-                                          child: Text(
-                                            getJsonField(
-                                              getmysubmissionhistorylistItem,
-                                              r'''$.ReferenceNo''',
-                                            ).toString(),
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium,
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment:
-                                              AlignmentDirectional(-1.0, -1.0),
-                                          child: Text(
-                                            '${getJsonField(
-                                              getmysubmissionhistorylistItem,
-                                              r'''$.EQUNR''',
-                                            ).toString()} - ${getJsonField(
-                                              getmysubmissionhistorylistItem,
-                                              r'''$.ObjectTypeDesc''',
-                                            ).toString()}',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontFamily: 'Readex Pro',
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment:
-                                              AlignmentDirectional(-1.0, -1.0),
-                                          child: Text(
-                                            getJsonField(
-                                              getmysubmissionhistorylistItem,
-                                              r'''$.ModifiedDate''',
-                                            ).toString(),
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontFamily: 'Readex Pro',
-                                                  fontWeight: FontWeight.w200,
-                                                ),
-                                          ),
-                                        ),
-                                      ],
+                            return InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                context.pushNamed(
+                                  'actionhistory',
+                                  queryParameters: {
+                                    'equnr': serializeParam(
+                                      getJsonField(
+                                        getmysubmissionhistorylistItem,
+                                        r'''$.EQUNR''',
+                                      ).toString(),
+                                      ParamType.String,
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0.0, 0.0, 20.0, 0.0),
-                                  child: FFButtonWidget(
-                                    onPressed: () {
-                                      print('Button pressed ...');
-                                    },
-                                    text: getJsonField(
-                                      getmysubmissionhistorylistItem,
-                                      r'''$.StatusDesc''',
-                                    ).toString(),
-                                    options: FFButtonOptions(
-                                      height: 40.0,
+                                    'sourceid': serializeParam(
+                                      getJsonField(
+                                        getmysubmissionhistorylistItem,
+                                        r'''$.ID''',
+                                      ).toString(),
+                                      ParamType.String,
+                                    ),
+                                    'colorName': serializeParam(
+                                      getJsonField(
+                                        getmysubmissionhistorylistItem,
+                                        r'''$.ColorCode''',
+                                      ).toString(),
+                                      ParamType.String,
+                                    ),
+                                    'activityaction': serializeParam(
+                                      getJsonField(
+                                        getmysubmissionhistorylistItem,
+                                        r'''$.StatusDesc''',
+                                      ).toString(),
+                                      ParamType.String,
+                                    ),
+                                    'refno': serializeParam(
+                                      getJsonField(
+                                        getmysubmissionhistorylistItem,
+                                        r'''$.ReferenceNo''',
+                                      ).toString(),
+                                      ParamType.String,
+                                    ),
+                                  }.withoutNulls,
+                                );
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Expanded(
+                                    child: Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
-                                      iconPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
-                                              0.0, 0.0, 0.0, 0.0),
-                                      color: colorFromCssString(
-                                        functions.colortohex(getJsonField(
-                                          getmysubmissionhistorylistItem,
-                                          r'''$.ColorCode''',
-                                        ).toString())!,
-                                        defaultColor:
-                                            FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                      ),
-                                      textStyle: FlutterFlowTheme.of(context)
-                                          .titleSmall
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            color: Colors.white,
+                                          20.0, 10.0, 10.0, 10.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Align(
+                                            alignment: AlignmentDirectional(
+                                                -1.0, -1.0),
+                                            child: Text(
+                                              getJsonField(
+                                                getmysubmissionhistorylistItem,
+                                                r'''$.ReferenceNo''',
+                                              ).toString(),
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium,
+                                            ),
                                           ),
-                                      elevation: 3.0,
-                                      borderSide: BorderSide(
-                                        color: Colors.transparent,
-                                        width: 1.0,
+                                          Align(
+                                            alignment: AlignmentDirectional(
+                                                -1.0, -1.0),
+                                            child: Text(
+                                              '${getJsonField(
+                                                getmysubmissionhistorylistItem,
+                                                r'''$.EQUNR''',
+                                              ).toString()} - ${getJsonField(
+                                                getmysubmissionhistorylistItem,
+                                                r'''$.ObjectTypeDesc''',
+                                              ).toString()}',
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodyMedium
+                                                  .override(
+                                                    fontFamily: 'Readex Pro',
+                                                    fontWeight: FontWeight.w300,
+                                                  ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: AlignmentDirectional(
+                                                -1.0, -1.0),
+                                            child: Text(
+                                              getJsonField(
+                                                getmysubmissionhistorylistItem,
+                                                r'''$.ModifiedDate''',
+                                              ).toString(),
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodyMedium
+                                                  .override(
+                                                    fontFamily: 'Readex Pro',
+                                                    fontWeight: FontWeight.w200,
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 20.0, 0.0),
+                                    child: FFButtonWidget(
+                                      onPressed: () {
+                                        print('Button pressed ...');
+                                      },
+                                      text: getJsonField(
+                                        getmysubmissionhistorylistItem,
+                                        r'''$.StatusDesc''',
+                                      ).toString(),
+                                      options: FFButtonOptions(
+                                        height: 40.0,
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 0.0, 24.0, 0.0),
+                                        iconPadding:
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0.0, 0.0, 0.0, 0.0),
+                                        color: colorFromCssString(
+                                          functions.colortohex(getJsonField(
+                                            getmysubmissionhistorylistItem,
+                                            r'''$.ColorCode''',
+                                          ).toString())!,
+                                          defaultColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondaryText,
+                                        ),
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              color: Colors.white,
+                                            ),
+                                        elevation: 3.0,
+                                        borderSide: BorderSide(
+                                          color: Colors.transparent,
+                                          width: 1.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           },
                         ),

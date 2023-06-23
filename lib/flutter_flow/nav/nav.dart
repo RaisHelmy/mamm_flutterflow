@@ -45,28 +45,25 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'Login',
           path: '/login',
-          builder: (context, params) => LoginWidget(
-            username: params.getParam('username', ParamType.String),
-            password: params.getParam('password', ParamType.String),
-          ),
+          builder: (context, params) => LoginWidget(),
         ),
         FFRoute(
           name: 'Home',
           path: '/home',
-          builder: (context, params) => HomeWidget(
-            tokenuser: params.getParam('tokenuser', ParamType.String),
-          ),
+          builder: (context, params) => HomeWidget(),
         ),
         FFRoute(
           name: 'EquipmentSearch',
           path: '/equipmentsearch',
-          builder: (context, params) => EquipmentSearchWidget(),
+          builder: (context, params) => EquipmentSearchWidget(
+            tokenuser: params.getParam('tokenuser', ParamType.String),
+          ),
         ),
         FFRoute(
           name: 'searchbyserialno',
           path: '/searchbyserialno',
           builder: (context, params) => SearchbyserialnoWidget(
-            eqno: params.getParam('eqno', ParamType.String),
+            uid: params.getParam('uid', ParamType.String),
           ),
         ),
         FFRoute(
@@ -74,27 +71,43 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: '/editequnr',
           builder: (context, params) => EditequnrWidget(
             equnr: params.getParam('equnr', ParamType.String),
-            uid: params.getParam('uid', ParamType.String),
           ),
         ),
         FFRoute(
           name: 'mysubmission',
           path: '/mysubmission',
-          builder: (context, params) => MysubmissionWidget(
-            uid: params.getParam('uid', ParamType.String),
+          builder: (context, params) => MysubmissionWidget(),
+        ),
+        FFRoute(
+          name: 'equipment',
+          path: '/equipment',
+          builder: (context, params) => EquipmentWidget(
+            equnr: params.getParam('equnr', ParamType.String),
           ),
         ),
         FFRoute(
-          name: 'eqbyequnr',
-          path: '/eqbyequnr',
-          builder: (context, params) => EqbyequnrWidget(),
+          name: 'actionhistory',
+          path: '/actionhistory',
+          builder: (context, params) => ActionhistoryWidget(
+            equnr: params.getParam('equnr', ParamType.String),
+            sourceid: params.getParam('sourceid', ParamType.String),
+            colorName: params.getParam('colorName', ParamType.String),
+            activityaction: params.getParam('activityaction', ParamType.String),
+            refno: params.getParam('refno', ParamType.String),
+          ),
         ),
         FFRoute(
-          name: 'resultbyequnr2',
-          path: '/resultbyequnr2',
-          builder: (context, params) => Resultbyequnr2Widget(
-            equnr: params.getParam('equnr', ParamType.String),
-            uid: params.getParam('uid', ParamType.String),
+          name: 'picture',
+          path: '/picture',
+          builder: (context, params) => PictureWidget(
+            filename: params.getParam('filename', ParamType.String),
+            filesize: params.getParam('filesize', ParamType.String),
+            filestatus: params.getParam('filestatus', ParamType.String),
+            category: params.getParam('category', ParamType.String),
+            createdby: params.getParam('createdby', ParamType.String),
+            createddate: params.getParam('createddate', ParamType.String),
+            modifiedby: params.getParam('modifiedby', ParamType.String),
+            modifieddate: params.getParam('modifieddate', ParamType.String),
           ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),

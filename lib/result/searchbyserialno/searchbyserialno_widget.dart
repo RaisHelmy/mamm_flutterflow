@@ -2,6 +2,8 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,10 +14,10 @@ export 'searchbyserialno_model.dart';
 class SearchbyserialnoWidget extends StatefulWidget {
   const SearchbyserialnoWidget({
     Key? key,
-    required this.eqno,
+    this.uid,
   }) : super(key: key);
 
-  final String? eqno;
+  final String? uid;
 
   @override
   _SearchbyserialnoWidgetState createState() => _SearchbyserialnoWidgetState();
@@ -68,7 +70,7 @@ class _SearchbyserialnoWidgetState extends State<SearchbyserialnoWidget> {
             },
           ),
           title: Text(
-            'Search Result (121)',
+            'Search Result (${FFAppState().listequipmentbyserialno.length.toString()})',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   fontFamily: 'Outfit',
                   color: Colors.white,
@@ -81,332 +83,300 @@ class _SearchbyserialnoWidgetState extends State<SearchbyserialnoWidget> {
         ),
         body: SafeArea(
           top: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Align(
-                alignment: AlignmentDirectional(1.0, 0.0),
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 40.0, 0.0),
-                  child: FFButtonWidget(
-                    onPressed: () async {
-                      context.pushNamed('editequnr');
-                    },
-                    text: 'Create',
-                    options: FFButtonOptions(
-                      height: 40.0,
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                      iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                      color: FlutterFlowTheme.of(context).primary,
-                      textStyle:
-                          FlutterFlowTheme.of(context).titleSmall.override(
-                                fontFamily: 'Readex Pro',
-                                color: Colors.white,
-                              ),
-                      elevation: 3.0,
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                        width: 1.0,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Align(
+                  alignment: AlignmentDirectional(1.0, 0.0),
+                  child: Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 40.0, 0.0),
+                    child: FFButtonWidget(
+                      onPressed: () async {
+                        context.pushNamed(
+                          'editequnr',
+                          queryParameters: {
+                            'equnr': serializeParam(
+                              '',
+                              ParamType.String,
+                            ),
+                          }.withoutNulls,
+                        );
+                      },
+                      text: 'Create',
+                      options: FFButtonOptions(
+                        height: 40.0,
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            24.0, 0.0, 24.0, 0.0),
+                        iconPadding:
+                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                        color: FlutterFlowTheme.of(context).primary,
+                        textStyle:
+                            FlutterFlowTheme.of(context).titleSmall.override(
+                                  fontFamily: 'Readex Pro',
+                                  color: Colors.white,
+                                ),
+                        elevation: 3.0,
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                          width: 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                      borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 8.0, 0.0),
-                        child: TextFormField(
-                          controller: _model.textController,
-                          autofocus: true,
-                          obscureText: false,
-                          decoration: InputDecoration(
-                            labelText: 'Search...',
-                            labelStyle:
-                                FlutterFlowTheme.of(context).labelMedium,
-                            hintStyle: FlutterFlowTheme.of(context).labelMedium,
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: FlutterFlowTheme.of(context).alternate,
-                                width: 2.0,
-                              ),
-                              borderRadius: BorderRadius.circular(8.0),
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              20.0, 0.0, 8.0, 0.0),
+                          child: TextFormField(
+                            controller: _model.textController,
+                            onChanged: (_) => EasyDebounce.debounce(
+                              '_model.textController',
+                              Duration(milliseconds: 0),
+                              () => setState(() {}),
                             ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: FlutterFlowTheme.of(context).primary,
-                                width: 2.0,
+                            autofocus: true,
+                            obscureText: false,
+                            decoration: InputDecoration(
+                              labelText: 'Search...',
+                              labelStyle:
+                                  FlutterFlowTheme.of(context).labelMedium,
+                              hintStyle:
+                                  FlutterFlowTheme.of(context).labelMedium,
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryText,
+                                  width: 2.0,
+                                ),
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            errorBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: FlutterFlowTheme.of(context).error,
-                                width: 2.0,
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  width: 2.0,
+                                ),
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            focusedErrorBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: FlutterFlowTheme.of(context).error,
-                                width: 2.0,
+                              errorBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: FlutterFlowTheme.of(context).error,
+                                  width: 2.0,
+                                ),
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
-                              borderRadius: BorderRadius.circular(8.0),
+                              focusedErrorBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: FlutterFlowTheme.of(context).error,
+                                  width: 2.0,
+                                ),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                  20.0, 0.0, 0.0, 0.0),
                             ),
-                            contentPadding: EdgeInsetsDirectional.fromSTEB(
-                                20.0, 0.0, 0.0, 0.0),
+                            style: FlutterFlowTheme.of(context).bodyMedium,
+                            validator: _model.textControllerValidator
+                                .asValidator(context),
                           ),
-                          style: FlutterFlowTheme.of(context).bodyMedium,
-                          validator: _model.textControllerValidator
-                              .asValidator(context),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 50.0, 0.0),
-                      child: Icon(
-                        Icons.search,
-                        color: FlutterFlowTheme.of(context).secondaryText,
-                        size: 24.0,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(5.0, 5.0, 5.0, 5.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 100.0,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 4.0,
-                            color: Color(0x33000000),
-                            offset: Offset(0.0, 2.0),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(5.0),
-                        border: Border.all(
-                          color: FlutterFlowTheme.of(context).secondaryText,
-                          width: 1.0,
-                        ),
-                      ),
-                      child: Row(
+                Builder(
+                  builder: (context) {
+                    final listequipmentbyserialno = FFAppState()
+                        .listequipmentbyserialno
+                        .where((e) => functions.checkjsoncontainword(
+                            e, _model.textController.text))
+                        .toList();
+                    if (listequipmentbyserialno.isEmpty) {
+                      return Image.asset(
+                        'assets/images/unnamed.png',
+                      );
+                    }
+                    return SingleChildScrollView(
+                      child: Column(
                         mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  10.0, 10.0, 10.0, 10.0),
+                        children: List.generate(listequipmentbyserialno.length,
+                            (listequipmentbyserialnoIndex) {
+                          final listequipmentbyserialnoItem =
+                              listequipmentbyserialno[
+                                  listequipmentbyserialnoIndex];
+                          return Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                5.0, 5.0, 5.0, 5.0),
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                context.pushNamed(
+                                  'equipment',
+                                  queryParameters: {
+                                    'equnr': serializeParam(
+                                      getJsonField(
+                                        listequipmentbyserialnoItem,
+                                        r'''$.EQUNR''',
+                                      ).toString(),
+                                      ParamType.String,
+                                    ),
+                                  }.withoutNulls,
+                                );
+                              },
                               child: Container(
-                                width: 100.0,
+                                width: double.infinity,
                                 height: 100.0,
                                 decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context).warning,
-                                ),
-                                child: Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
-                                  child: Text(
-                                    'THB',
-                                    style:
-                                        FlutterFlowTheme.of(context).bodyMedium,
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 4.0,
+                                      color: Color(0x33000000),
+                                      offset: Offset(0.0, 2.0),
+                                    )
+                                  ],
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  border: Border.all(
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryText,
+                                    width: 1.0,
                                   ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Align(
+                                      alignment:
+                                          AlignmentDirectional(-1.0, 0.0),
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            10.0, 10.0, 10.0, 10.0),
+                                        child: Container(
+                                          width: 100.0,
+                                          height: 100.0,
+                                          decoration: BoxDecoration(
+                                            color: colorFromCssString(
+                                              getJsonField(
+                                                listequipmentbyserialnoItem,
+                                                r'''$.ColorCode''',
+                                              ).toString(),
+                                              defaultColor:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryText,
+                                            ),
+                                          ),
+                                          child: Align(
+                                            alignment:
+                                                AlignmentDirectional(0.0, 0.0),
+                                            child: Text(
+                                              getJsonField(
+                                                listequipmentbyserialnoItem,
+                                                r'''$.ObjectTypePrefix''',
+                                              ).toString(),
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 10.0, 10.0, 10.0),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, -1.0),
+                                              child: Text(
+                                                '${getJsonField(
+                                                  listequipmentbyserialnoItem,
+                                                  r'''$.EQUNR''',
+                                                ).toString()} (${getJsonField(
+                                                  listequipmentbyserialnoItem,
+                                                  r'''$.EQKTU''',
+                                                ).toString()})',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium,
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, -1.0),
+                                              child: Text(
+                                                '${getJsonField(
+                                                  listequipmentbyserialnoItem,
+                                                  r'''$.HERST''',
+                                                ).toString()}, ${getJsonField(
+                                                  listequipmentbyserialnoItem,
+                                                  r'''$.TYPBZ''',
+                                                ).toString()}',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'Readex Pro',
+                                                          fontWeight:
+                                                              FontWeight.w300,
+                                                        ),
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, -1.0),
+                                              child: Text(
+                                                getJsonField(
+                                                  listequipmentbyserialnoItem,
+                                                  r'''$.TPLNR''',
+                                                ).toString(),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'Readex Pro',
+                                                          fontWeight:
+                                                              FontWeight.w200,
+                                                        ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 10.0, 10.0, 10.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      '200201054 (TX HV BSHG)',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium,
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      'Hello World',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      'ABB - PASSONI VILLA',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      'AS/TASK/AE08/AA/T01',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontWeight: FontWeight.w200,
-                                          ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                          );
+                        }).divide(SizedBox(height: 2.0)),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              ListView(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(5.0, 5.0, 5.0, 5.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 100.0,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 4.0,
-                            color: Color(0x33000000),
-                            offset: Offset(0.0, 2.0),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(5.0),
-                        border: Border.all(
-                          color: FlutterFlowTheme.of(context).secondaryText,
-                          width: 1.0,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  10.0, 10.0, 10.0, 10.0),
-                              child: Container(
-                                width: 100.0,
-                                height: 100.0,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context).warning,
-                                ),
-                                child: Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
-                                  child: Text(
-                                    'THB',
-                                    style:
-                                        FlutterFlowTheme.of(context).bodyMedium,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 10.0, 10.0, 10.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      '200201054 (TX HV BSHG)',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium,
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      'Hello World',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      'ABB - PASSONI VILLA',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: AlignmentDirectional(-1.0, -1.0),
-                                    child: Text(
-                                      'AS/TASK/AE08/AA/T01',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontWeight: FontWeight.w200,
-                                          ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
